@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,7 +14,6 @@ namespace frazione
     public partial class Form1 : Form
     {
         private Frazione frazione1;
-        private Frazione frazione2;
         private FrazioneDecimal frazioneDecimal;
         public Form1()
         {
@@ -22,58 +22,59 @@ namespace frazione
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            frazione1 = new Frazione(0, 1);
-            frazione2 = new Frazione(0, 1);
-            frazioneDecimal = new FrazioneDecimal(0, 1);
+            
         }
 
-        private void AggiornaInterfaccia()
-        {
-            textBox1.Text = $"{frazione1.Numeratore}/{frazione1.Denominatore}";
-            textBox2.Text = $"{frazione2.Numeratore}/{frazione2.Denominatore}";
-            textBox3.Text = $"{frazioneDecimal.ConvertiInDecimale()}";
-        }
 
         private void button1_Click(object sender, EventArgs e)//pulsante semplifica frazione
         {
-            frazione1.Semplifica();
-            frazione2.Semplifica();
-            AggiornaInterfaccia();
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            Frazione frazione = new Frazione(num, denom);
+            frazione.Semplifica();
+            textBox3.Text = frazione.Numeratore.ToString() + "/" + frazione.Denominatore.ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)//pulsante somma frazione
         {
-            Frazione risultato = frazione1.Somma(frazione2);
-            frazioneDecimal = new FrazioneDecimal(risultato.Numeratore, risultato.Denominatore);
-            AggiornaInterfaccia();
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            Frazione frazione = new Frazione(num, denom);
+            textBox3.Text=frazione.Somma().ToString();   
         }
 
         private void button3_Click(object sender, EventArgs e)//pulsante sottrai frazione
         {
-            Frazione risultato = frazione1.Sottrai(frazione2);
-            frazioneDecimal = new FrazioneDecimal(risultato.Numeratore, risultato.Denominatore);
-            AggiornaInterfaccia();
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            Frazione frazione =new Frazione(num, denom);
+            textBox3.Text= frazione.Sottrai().ToString(); 
         }
 
         private void button4_Click(object sender, EventArgs e)//pulsante moltiplica frazione
         {
-            Frazione risultato = frazione1.Moltiplica(frazione2);
-            frazioneDecimal = new FrazioneDecimal(risultato.Numeratore, risultato.Denominatore);
-            AggiornaInterfaccia();
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            Frazione frazione = new Frazione(num,denom);
+            textBox3.Text = frazione.Moltiplica().ToString();
+           
+        
         }
 
         private void button5_Click(object sender, EventArgs e)//pulsante dividi frazione
         {
-            try
-            {
-                Frazione risultato = frazione1.Dividi(frazione2);
-                frazioneDecimal = new FrazioneDecimal(risultato.Numeratore, risultato.Denominatore);
-                AggiornaInterfaccia();
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message, "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            Frazione frazione = new Frazione(num, denom);
+            textBox3.Text = frazione.Dividi().ToString();
+        }
+
+        private void button6_Click(object sender, EventArgs e) //pulsante elevazione a potenza
+        {
+            int num = int.Parse(textBox1.Text);
+            int denom = int.Parse(textBox2.Text);
+            FrazioneDecimal frazione = new FrazioneDecimal(num, denom);
+            textBox3.Text = frazione.ElevaAPotenza().ToString();
         }
     }
 
@@ -89,6 +90,12 @@ namespace frazione
         {
             this.numeratore = numeratore;
             this.denominatore = denominatore;
+    
+        }
+
+        public Frazione()
+        {
+        
         }
 
         // Costruttore di copia
@@ -96,6 +103,7 @@ namespace frazione
         {
             this.numeratore = altreFrazione.numeratore;
             this.denominatore = altreFrazione.denominatore;
+ 
         }
 
         // Proprietà
@@ -117,6 +125,8 @@ namespace frazione
             }
         }
 
+       
+
         // Metodo per semplificare la frazione
         public void Semplifica()
         {
@@ -137,43 +147,43 @@ namespace frazione
             return a;
         }
 
-        // Metodo per sommare due frazioni
-        public Frazione Somma(Frazione altraFrazione)
+        // Metodo per sommare nueratore e denominatore
+        public int Somma()
         {
-            int nuovoNumeratore = numeratore * altraFrazione.denominatore + altraFrazione.numeratore * denominatore;
-            int nuovoDenominatore = denominatore * altraFrazione.denominatore;
-            return new Frazione(nuovoNumeratore, nuovoDenominatore);
+            int somma =  Numeratore + Denominatore;
+            return somma;
         }
 
         // Metodo per sottrarre due frazioni
-        public Frazione Sottrai(Frazione altraFrazione)
+        public int Sottrai()
         {
-            int nuovoNumeratore = numeratore * altraFrazione.denominatore - altraFrazione.numeratore * denominatore;
-            int nuovoDenominatore = denominatore * altraFrazione.denominatore;
-            return new Frazione(nuovoNumeratore, nuovoDenominatore);
+            int sottrai;
+            sottrai = Numeratore - Denominatore;
+            return sottrai;
         }
 
         // Metodo per moltiplicare due frazioni
-        public Frazione Moltiplica(Frazione altraFrazione)
+        public int Moltiplica()
         {
-            int nuovoNumeratore = numeratore * altraFrazione.numeratore;
-            int nuovoDenominatore = denominatore * altraFrazione.denominatore;
-            return new Frazione(nuovoNumeratore, nuovoDenominatore);
+            int moltiplica;
+            moltiplica = Numeratore * Denominatore;
+            return moltiplica;
         }
 
         // Metodo per dividere due frazioni
-        public Frazione Dividi(Frazione altraFrazione)
+        public double Dividi()
         {
-            if (altraFrazione.numeratore != 0)
+            double dividi;
+            double num = double.Parse(Numeratore.ToString());
+            double denom = double.Parse(Denominatore.ToString());
+            dividi =(num / denom);
+            if (denom == 0)
             {
-                int nuovoNumeratore = numeratore * altraFrazione.denominatore;
-                int nuovoDenominatore = denominatore * altraFrazione.numeratore;
-                return new Frazione(nuovoNumeratore, nuovoDenominatore);
+                MessageBox.Show("Errore, valore indefinito");
             }
-            else
-            {
-                throw new ArgumentException("Impossibile dividere per zero.");
-            }
+            return dividi;
+            
+            
         }
 
         // Metodo per clonare la frazione
@@ -189,6 +199,12 @@ namespace frazione
         // Costruttore
         public FrazioneDecimal(int numeratore, int denominatore) : base(numeratore, denominatore)
         {
+
+        }
+
+        public FrazioneDecimal(Frazione altreFrazione) : base(altreFrazione)
+        {
+
         }
 
         // Metodo per rappresentare la frazione in decimale
@@ -214,6 +230,8 @@ namespace frazione
         {
             return new FrazioneDecimal((int)Math.Pow(Numeratore, esponente), (int)Math.Pow(Denominatore, esponente));
         }
+
+        
     }
 
     
